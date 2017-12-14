@@ -50,6 +50,7 @@ var publish = function (payload, topic, qos) {
 message.addEventListener("keydown", function (event) {
   if (event.which == 13 || event.keyCode == 13) {
     publish(message.value, 'emir', 2);
+    message.value = "";
   }
 });
 
