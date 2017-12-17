@@ -1,5 +1,5 @@
 //Create a new Client object with your broker's hostname, port and your own clientId
-var client = new Messaging.Client("broker.mqttdashboard.com", 8000, "myclientid_" + parseInt(Math.random() * 100, 10));
+var client = new Paho.MQTT.Client("broker.mqttdashboard.com", Number(8000), "myclientid_" + parseInt(Math.random() * 100, 10));
 
 var nick;
 
@@ -29,6 +29,9 @@ var options = {
   //Gets Called if the connection has successfully been established
   onSuccess: function () {
     messagesDiv.innerHTML = `<p class="bg-primary message">Connected.</p>` + messagesDiv.innerHTML;
+
+    client.subscribe('emir');
+    messagesDiv.innerHTML = `<p class="bg-primary message">Subscribed.</p>` + messagesDiv.innerHTML;
   },
 
   //Gets Called if the connection could not be established
@@ -40,10 +43,6 @@ var options = {
 
 //Attempt to connect
 client.connect(options);
-setTimeout(function() {
-  client.subscribe('emir', { qos: 2 });
-  messagesDiv.innerHTML = `<p class="bg-primary message">Subscribed.</p>` + messagesDiv.innerHTML;
-},3000);
 
 //Gets called whenever you receive a message for your subscriptions
 client.onMessageArrived = function (message) {
@@ -54,9 +53,8 @@ client.onMessageArrived = function (message) {
 
 var publish = function (payload, topic, qos) {
   //Send your message (also possible to serialize it as JSON or protobuf or just use a string, no limitations)
-  var message = new Messaging.Message(payload);
+  var message = new Paho.MQTT.Message(payload);
   message.destinationName = topic;
-  message.qos = qos;
   client.send(message);
 };
 
